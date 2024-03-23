@@ -159,7 +159,7 @@ const forgotPassword = asyncHandle(async (req, res) => {
           data: []
         })
       })
-      .catch((error) => {
+      .catch(() => {
         res.status(401)
         throw new Error('Can not send email')
       })

@@ -1,6 +1,6 @@
 /** @format */
 
-const { default: mongoose, isValidObjectId, Schema } = require('mongoose')
+const { default: mongoose } = require('mongoose')
 
 const UserSchema = new mongoose.Schema({
   username: {
