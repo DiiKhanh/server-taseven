@@ -6,8 +6,7 @@ const dbUrl = `mongodb+srv://${process.env.DATABASE_USERNAME}:${process.env.DATA
 
 const connectDB = async () => {
   try {
-    const connection = await mongoose.connect(dbUrl)
-
+    await mongoose.connect(dbUrl)
     console.log('Connect to mongodb successfully!!!')
   } catch (error) {
     console.log(error)
