@@ -4,12 +4,10 @@ const { default: mongoose } = require('mongoose')
 
 const UserSchema = new mongoose.Schema({
   username: {
-    type: String
+    type: String,
+    unique: true
   },
-  givenName: {
-    type: String
-  },
-  familyName: {
+  fullname: {
     type: String
   },
   bio: {
@@ -17,6 +15,7 @@ const UserSchema = new mongoose.Schema({
   },
   email: {
     type: String,
+    unique: true,
     require: true
   },
   password: {
@@ -24,6 +23,9 @@ const UserSchema = new mongoose.Schema({
     require: true
   },
   photoUrl: {
+    type: String
+  },
+  filename: {
     type: String
   },
   createdAt: {
@@ -35,15 +37,6 @@ const UserSchema = new mongoose.Schema({
     default: Date.now()
   },
   fcmTokens: {
-    type: [String]
-  },
-  following: {
-    type: [String]
-  },
-  followers: {
-    type: [String]
-  },
-  interests: {
     type: [String]
   }
 })
