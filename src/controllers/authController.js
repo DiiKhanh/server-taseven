@@ -43,7 +43,7 @@ const verification = asyncHandle(async (req, res) => {
 
   try {
     const data = {
-      from: `"Support Taseven Appplication" <${process.env.USERNAME_EMAIL}>`,
+      from: `'Support Taseven Appplication' <${process.env.USERNAME_EMAIL}>`,
       to: email,
       subject: 'Verification email code',
       text: 'Your code to verification email',
@@ -136,7 +136,7 @@ const forgotPassword = asyncHandle(async (req, res) => {
   const randomPassword = Math.round(100000 + Math.random() * 99000)
 
   const data = {
-    from: `"New Password" <${process.env.USERNAME_EMAIL}>`,
+    from: `'New Password' <${process.env.USERNAME_EMAIL}>`,
     to: email,
     subject: 'Verification email code',
     text: 'Your code to verification email',
@@ -174,9 +174,76 @@ const forgotPassword = asyncHandle(async (req, res) => {
   }
 })
 
+const handleLoginWithGoogle = asyncHandle(async (req, res) => {
+  const userInfo = req.body
+
+  const existingUser = await UserModel.findOne({ email: userInfo.email })
+  let user
+  if (existingUser) {
+    await UserModel.findByIdAndUpdate(existingUser.id, {
+      updatedAt: Date.now()
+    })
+    user = { ...existingUser }
+    user.accesstoken = await getJsonWebToken(userInfo.email, userInfo.id)
+
+    if (user) {
+      const data = {
+        accesstoken: user.accesstoken,
+        id: existingUser._id,
+        email: existingUser.email,
+        fcmTokens: existingUser.fcmTokens ?? [],
+        photoUrl: existingUser.photoUrl ?? '',
+        username: existingUser.name ?? '',
+        filename: existingUser.filename ?? '',
+        fullname: existingUser.fullname ?? ''
+      }
+
+      res.status(200).json({
+        message: 'Login with google successfully!!!',
+        data
+      })
+    } else {
+      res.sendStatus(401)
+      throw new Error('Error google login')
+    }
+  } else {
+    const pos = userInfo.email.indexOf('@')
+
+    const newUser = new UserModel({
+      email: userInfo.email,
+      fullname: userInfo.name,
+      photoUrl: userInfo.photo,
+      username: userInfo.email.slice(0, pos)
+    })
+    await newUser.save()
+    user = { ...newUser }
+    user.accesstoken = await getJsonWebToken(userInfo.email, newUser.id)
+
+    if (user) {
+      res.status(200).json({
+        message: 'Login with google successfully!!!',
+        data: {
+          accesstoken: user.accesstoken,
+          id: newUser._id,
+          email: newUser.email,
+          photoUrl: newUser.photoUrl,
+          username: newUser.username,
+          fullname: newUser.fullname ?? '',
+          fcmTokens: newUser.fcmTokens ?? [],
+          filename: newUser.filename ?? ''
+        }
+      })
+    } else {
+      res.sendStatus(401)
+      throw new Error('Error login google')
+    }
+  }
+})
+
 module.exports = {
   register,
   login,
   verification,
-  forgotPassword
+  forgotPassword,
+  handleLoginWithGoogle
 }
