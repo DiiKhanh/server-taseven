@@ -3,6 +3,8 @@ const cors = require('cors')
 const connectDB = require('./configs/connectDb')
 const authRouter = require('./routers/authRouter')
 const errorMiddleHandle = require('./middlewares/errorMiddleware')
+const userRouter = require('./routers/userRouter')
+const verifyToken = require('./middlewares/verifyMiddleware')
 const app = express()
 require('dotenv').config()
 
@@ -13,6 +15,7 @@ app.use(express.urlencoded({ extended: true }))
 const PORT = process.env.PORT || 3002
 
 app.use('/auth', authRouter)
+app.use('/users', verifyToken, userRouter)
 
 connectDB()
 
