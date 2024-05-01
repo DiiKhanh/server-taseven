@@ -97,9 +97,14 @@ const register = asyncHandle(async (req, res) => {
 })
 
 const login = asyncHandle(async (req, res) => {
-  const { email, password } = req.body
+  const { email, password, username } = req.body
 
-  const existingUser = await UserModel.findOne({ email })
+  let existingUser
+  if (email) {
+    existingUser = await UserModel.findOne({ email })
+  } else if (username) {
+    existingUser = await UserModel.findOne({ username })
+  }
 
   if (!existingUser) {
     res.status(403)
@@ -113,7 +118,7 @@ const login = asyncHandle(async (req, res) => {
     throw new Error('Email or Password is not correct!')
   }
 
-  const accesstoken = await getJsonWebToken(email, existingUser.id)
+  const accesstoken = await getJsonWebToken(existingUser.email, existingUser.id)
 
   res.status(200).json({
     message: 'Login successfully',
@@ -123,7 +128,7 @@ const login = asyncHandle(async (req, res) => {
       accesstoken,
       fcmTokens: existingUser.fcmTokens ?? [],
       photoUrl: existingUser.photoUrl ?? '',
-      username: existingUser.name ?? '',
+      username: existingUser.username ?? '',
       filename: existingUser.filename ?? '',
       fullname: existingUser.fullname ?? ''
     }
@@ -193,7 +198,7 @@ const handleLoginWithGoogle = asyncHandle(async (req, res) => {
         email: existingUser.email,
         fcmTokens: existingUser.fcmTokens ?? [],
         photoUrl: existingUser.photoUrl ?? '',
-        username: existingUser.name ?? '',
+        username: existingUser.username ?? '',
         filename: existingUser.filename ?? '',
         fullname: existingUser.fullname ?? ''
       }
