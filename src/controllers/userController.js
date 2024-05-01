@@ -51,8 +51,68 @@ const getProfile = asyncHandle(async (req, res) => {
   }
 })
 
+const updateProfile = asyncHandle(async (req, res) => {
+  const { id } = req.query
+  const fileData = req.file
+  const body = req.body
+  if (fileData) {
+    res.sendStatus(401)
+    throw new Error('Missing data')
+  }
+  let newData
+  if (fileData.path) {
+    newData = {
+      fullname: body.fullname,
+      photoUrl: fileData.path,
+      filename: fileData.filename
+    }
+  } else {
+    newData = {
+      fullname: body.fullname
+    }
+  }
+  if (id && newData) {
+    const user = await UserModel.findById(id)
+    if (user && user.filename) {
+      await cloudinary.uploader.destroy(user.filename)
+    }
+    const result = await UserModel.findByIdAndUpdate(id, newData)
+
+
+    res.status(200).json({
+      message: 'Update profile successfully!!',
+      data: result
+    })
+  } else {
+    if (fileData.path) {
+      await cloudinary.uploader.destroy(fileData.filename)
+    }
+    res.sendStatus(401)
+    throw new Error('Missing data')
+  }
+})
+
+
+const updateProfileWithoutFile = asyncHandle(async (req, res) => {
+  const { id } = req.query
+  const body = req.body
+
+  if (id && body) {
+    const result = await UserModel.findByIdAndUpdate(id, body)
+    res.status(200).json({
+      message: 'Update profile successfully!!',
+      data: result
+    })
+  } else {
+    res.sendStatus(401)
+    throw new Error('Missing data')
+  }
+})
+
 
 module.exports = {
   getAllUsers,
-  getProfile
+  getProfile,
+  updateProfileWithoutFile,
+  updateProfile
 }
