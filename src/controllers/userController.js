@@ -2,7 +2,6 @@ const asyncHandle = require('express-async-handler')
 const UserModel = require('../models/userModel')
 const cloudinary = require('../configs/cloudinaryConfig')
 
-
 require('dotenv').config()
 
 
@@ -55,7 +54,7 @@ const updateProfile = asyncHandle(async (req, res) => {
   const { id } = req.query
   const fileData = req.file
   const body = req.body
-  if (fileData) {
+  if (!fileData) {
     res.sendStatus(401)
     throw new Error('Missing data')
   }
@@ -79,7 +78,7 @@ const updateProfile = asyncHandle(async (req, res) => {
     const result = await UserModel.findByIdAndUpdate(id, newData)
 
 
-    res.status(200).json({
+    return res.status(200).json({
       message: 'Update profile successfully!!',
       data: result
     })
