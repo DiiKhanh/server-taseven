@@ -1,5 +1,6 @@
 const asyncHandle = require('express-async-handler')
 const UserModel = require('../models/userModel')
+const EventModel = require('../models/eventModel')
 const cloudinary = require('../configs/cloudinaryConfig')
 
 const { JWT } = require('google-auth-library')
@@ -250,10 +251,138 @@ const pushInviteNotifications = asyncHandle(async (req, res) => {
   })
 })
 
+const getEventsFollowed = asyncHandle(async (req, res) => {
+  const { uid } = req.query
+
+
+  if (uid) {
+    const events = await EventModel.find({ followers: { $all: uid } })
+
+
+    const ids = []
+
+
+    events.forEach((event) => ids.push(event.id))
+
+
+    res.status(200).json({
+      message: 'fafa',
+      data: ids
+    })
+  } else {
+    res.sendStatus(401)
+    throw new Error('Missing uid')
+  }
+})
+
+const getFollowes = asyncHandle(async (req, res) => {
+  const { uid } = req.query
+
+
+  if (uid) {
+    const users = await UserModel.find({ following: { $all: uid } })
+
+
+    const ids = []
+
+
+    if (users.length > 0) {
+      users.forEach((user) => ids.push(user._id))
+    }
+
+
+    res.status(200).json({
+      message: '',
+      data: ids
+    })
+  } else {
+    res.sendStatus(404)
+    throw new Error('can not find uid')
+  }
+})
+
+const getFollowings = asyncHandle(async (req, res) => {
+  const { uid } = req.query
+
+
+  if (uid) {
+    const user = await UserModel.findById(uid)
+
+
+    res.status(200).json({
+      message: '',
+      data: user.following
+    })
+  } else {
+    res.sendStatus(404)
+    throw new Error('can not find uid')
+  }
+})
+
+const updateInterests = asyncHandle(async (req, res) => {
+  const body = req.body
+  const { uid } = req.query
+
+  if (uid && body) {
+    await UserModel.findByIdAndUpdate(uid, {
+      interests: body
+    })
+
+    res.status(200).json({
+      message: 'Update interested successfully',
+      data: body
+    })
+  } else {
+    res.sendStatus(404)
+    throw new Error('Missing data')
+  }
+})
+
+const toggleFollowing = asyncHandle(async (req, res) => {
+  const { uid, authorId } = req.body
+
+  if (uid && authorId) {
+    const user = await UserModel.findById(uid)
+
+    if (user) {
+      const { following } = user
+
+      const items = following ?? []
+      const index = items.findIndex((element) => element === authorId)
+      if (index !== -1) {
+        items.splice(index, 1)
+      } else {
+        items.push(`${authorId}`)
+      }
+
+      await UserModel.findByIdAndUpdate(uid, {
+        following: items
+      })
+
+      res.status(200).json({
+        message: 'update following successfully!!!',
+        data: items
+      })
+    } else {
+      res.sendStatus(404)
+      throw new Error('user or author not found!!!')
+    }
+  } else {
+    res.sendStatus(404)
+    throw new Error('Missing data!!')
+  }
+})
+
+
 module.exports = {
   getAllUsers,
   getProfile,
   updateProfileWithoutFile,
   updateProfile,
-  pushInviteNotifications
+  pushInviteNotifications,
+  getEventsFollowed,
+  getFollowes,
+  getFollowings,
+  updateInterests,
+  toggleFollowing
 }
