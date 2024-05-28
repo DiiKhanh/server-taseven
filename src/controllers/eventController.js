@@ -179,9 +179,148 @@ const getFollowers = asyncHandle(async (req, res) => {
   }
 })
 
+const createCategory = asyncHandle(async (req, res) => {
+  const data = req.body
+
+  const newCategory = new CategoryModel(data)
+
+  newCategory.save()
+  res.status(200).json({
+    message: 'Add new category successfully!!!',
+    data: newCategory
+  })
+})
+
+const updateCategory = asyncHandle(async(req, res) => {
+  const data = req.body
+  const { id } = req.query
+
+  const item = await CategoryModel.findByIdAndUpdate(id, data)
+
+  res.status(200).json({
+    message: 'Update category successfully!!!',
+    data: item
+  })
+
+
+})
+
+const getCategories = asyncHandle(async (req, res) => {
+  const items = await CategoryModel.find({})
+
+  res.status(200).json({
+    message: 'get successfully!!!',
+    data: items
+  })
+})
+const getCategoryDetail = asyncHandle(async (req, res) => {
+
+  const { id } = req.query
+
+  const item = await CategoryModel.findById(id)
+
+  res.status(200).json({
+    message: 'get successfully!!!',
+    data: item
+  })
+})
+
+const joinEvent = asyncHandle(async (req, res) => {
+  const { uid, eventId } = req.query
+
+  const itemEvent = await EventModel.findById(eventId)
+
+  const joined = itemEvent.joined ? itemEvent.joined : []
+
+  if (joined.includes(uid)) {
+    const index = joined.findIndex(element => element === uid)
+
+    joined.splice(index, 1)
+  } else {
+    joined.push(uid)
+  }
+
+  await EventModel.findByIdAndUpdate(eventId, {
+    joined
+  })
+
+  res.status(200).json({
+    message: 'Added',
+    data: []
+  })
+})
+
+const updateEvent = asyncHandle(async (req, res) => {
+  const data = req.body
+  const { id } = req.query
+
+  const item = await EventModel.findByIdAndUpdate(id, data)
+
+  res.status(200).json({
+    message: 'Update event successfully!!!',
+    data: item
+  })
+})
+const getEventsByCategoyId = asyncHandle(async (req, res) => {
+  const { id } = req.query
+
+  const items = await EventModel.find({ categories: { $all: id } })
+
+  res.status(200).json({
+    message: 'get Events by categories successfully!!!',
+    data: items
+  })
+})
+
+const handleAddNewBillDetail = asyncHandle(async (req, res) => {
+  const data = req.body
+
+  data.price = parseFloat(data.price)
+
+  const bill = new BillModel(data)
+  bill.save()
+
+  res.status(200).json({
+    message: 'Add new bill info successfully',
+    data: bill
+  })
+})
+
+const handleUpdatePaymentSuccess = asyncHandle(async (req, res) => {
+  const { billId } = req.query
+  await BillModel.findByIdAndUpdate(billId, {
+    status: 'success'
+  })
+
+  const data = {
+    from: `"Support EventHub Appplication" <${process.env.USERNAME_EMAIL}>`,
+    to: 'bsdaoquang@gmail.com',
+    subject: 'Verification email code',
+    text: 'Your code to verification email',
+    html: '<h1>Your ticket</h1>'
+  }
+
+  await handleSendMail(data)
+
+  res.status(200).json({
+    message: 'Update bill successfully',
+    data: []
+  })
+})
+
 module.exports = {
   addNewEvent,
   getEvents,
   updateFollowers,
-  getFollowers
+  getFollowers,
+  createCategory,
+  getCategories,
+  updateCategory,
+  getCategoryDetail,
+  getEventById,
+  updateEvent,
+  getEventsByCategoyId,
+  handleAddNewBillDetail,
+  handleUpdatePaymentSuccess,
+  joinEvent
 }
