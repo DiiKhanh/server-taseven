@@ -8,7 +8,8 @@ const {
   getEventById,
   getFollowers,
   updateFollowers,
-  handleAddNewBillDetail
+  handleAddNewBillDetail,
+  handleUpdatePaymentSuccess
 } = require('../controllers/eventController')
 
 const eventRouter = Router()
@@ -22,5 +23,6 @@ eventRouter.get('/get-event', getEventById)
 eventRouter.get('/followers', getFollowers)
 eventRouter.post('/update-followes', updateFollowers)
 eventRouter.post('/buy-ticket', handleAddNewBillDetail)
+eventRouter.get('/update-payment-success', handleUpdatePaymentSuccess)
 
 module.exports = eventRouter

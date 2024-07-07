@@ -238,6 +238,28 @@ const handleAddNewBillDetail = asyncHandle(async (req, res) => {
   })
 })
 
+const handleUpdatePaymentSuccess = asyncHandle(async (req, res) => {
+  const { billId } = req.query
+  await BillModel.findByIdAndUpdate(billId, {
+    status: 'success'
+  })
+
+  const data = {
+    from: `"Support EventHub Appplication" <${process.env.USERNAME_EMAIL}>`,
+    to: 'tentoiladuykhanh@gmail.com',
+    subject: 'Verification email code',
+    text: 'Your code to verification email',
+    html: '<h1>Your ticket</h1>'
+  }
+
+  await handleSendMail(data)
+
+  res.status(200).json({
+    message: 'Update bill successfully',
+    data: []
+  })
+})
+
 module.exports = {
   addNewEvent,
   getEvents,
@@ -248,5 +270,6 @@ module.exports = {
   updateCategory,
   getCategoryDetail,
   getEventById,
-  handleAddNewBillDetail
+  handleAddNewBillDetail,
+  handleUpdatePaymentSuccess
 }
