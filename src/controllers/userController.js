@@ -118,8 +118,6 @@ const getAllUsers = asyncHandle(async (req, res) => {
 
 const getProfile = asyncHandle(async (req, res) => {
   const { id } = req.query
-  const access = await getAccessToken()
-  console.log(access)
 
   if (id) {
     const profile = await UserModel.findOne({ _id: id })
@@ -133,8 +131,7 @@ const getProfile = asyncHandle(async (req, res) => {
         email: profile.email ?? '',
         photoUrl: profile.photoUrl ?? '',
         fullname: profile.fullname ?? '',
-        filename: profile.filename ?? '',
-        access
+        filename: profile.filename ?? ''
       }
     })
   } else {
