@@ -224,6 +224,20 @@ const getCategoryDetail = asyncHandle(async (req, res) => {
   })
 })
 
+const handleAddNewBillDetail = asyncHandle(async (req, res) => {
+  const data = req.body
+
+  data.price = parseFloat(data.price)
+
+  const bill = new BillModel(data)
+  bill.save()
+
+  res.status(200).json({
+    message: 'Add new bill info successfully',
+    data: bill
+  })
+})
+
 module.exports = {
   addNewEvent,
   getEvents,
@@ -232,5 +246,7 @@ module.exports = {
   createCategory,
   getCategories,
   updateCategory,
-  getCategoryDetail
+  getCategoryDetail,
+  getEventById,
+  handleAddNewBillDetail
 }

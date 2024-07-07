@@ -4,7 +4,11 @@ const {
   getCategories,
   updateCategory,
   getCategoryDetail,
-  getEvents
+  getEvents,
+  getEventById,
+  getFollowers,
+  updateFollowers,
+  handleAddNewBillDetail
 } = require('../controllers/eventController')
 
 const eventRouter = Router()
@@ -14,5 +18,9 @@ eventRouter.get('/get-categories', getCategories)
 eventRouter.put('/update-category', updateCategory)
 eventRouter.get('/get-category', getCategoryDetail)
 eventRouter.get('/get-events', getEvents)
+eventRouter.get('/get-event', getEventById)
+eventRouter.get('/followers', getFollowers)
+eventRouter.post('/update-followes', updateFollowers)
+eventRouter.post('/buy-ticket', handleAddNewBillDetail)
 
 module.exports = eventRouter
