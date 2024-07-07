@@ -199,7 +199,7 @@ const updateProfileWithoutFile = asyncHandle(async (req, res) => {
 })
 
 const pushInviteNotifications = asyncHandle(async (req, res) => {
-  const { ids, eventId } = req.body
+  const { ids, eventId, taskId, memberId } = req.body
 
   ids.forEach(async (id) => {
     const user = await UserModel.findById(id)
@@ -218,7 +218,9 @@ const pushInviteNotifications = asyncHandle(async (req, res) => {
               subtitle: '',
               body: 'Bạn đã được mời tham gia vào sự kiện nào đó',
               data: {
-                eventId
+                eventId,
+                taskId,
+                memberId
               }
             })
 

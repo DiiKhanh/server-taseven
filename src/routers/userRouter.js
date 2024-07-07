@@ -5,7 +5,8 @@ const {
   updateProfileWithoutFile,
   updateProfile,
   pushInviteNotifications,
-  updateFcmToken
+  updateFcmToken,
+  getAccessToken
 } = require('../controllers/userController')
 
 const uploadCloud = require('../middlewares/uploadMiddleware')
@@ -18,4 +19,5 @@ userRouter.patch('/update-profile', uploadCloud.single('image'), updateProfile)
 userRouter.patch('/update-profile-nofile', updateProfileWithoutFile)
 userRouter.post('/update-fcmtoken', updateFcmToken)
 userRouter.post('/send-invite', pushInviteNotifications)
+userRouter.get('/access', getAccessToken)
 module.exports = userRouter
