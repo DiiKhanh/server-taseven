@@ -201,8 +201,6 @@ const updateCategory = asyncHandle(async(req, res) => {
     message: 'Update category successfully!!!',
     data: item
   })
-
-
 })
 
 const getCategories = asyncHandle(async (req, res) => {
@@ -213,6 +211,7 @@ const getCategories = asyncHandle(async (req, res) => {
     data: items
   })
 })
+
 const getCategoryDetail = asyncHandle(async (req, res) => {
 
   const { id } = req.query

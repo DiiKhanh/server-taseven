@@ -31,7 +31,6 @@ const handleSendMail = async (val) => {
 const updateFcmToken = asyncHandle(async (req, res) => {
   const { uid, fcmTokens } = req.body
 
-
   await UserModel.findByIdAndUpdate(uid, {
     fcmTokens
   })
@@ -72,7 +71,7 @@ const handleSendNotification = async ({
   var request = require('request')
   var options = {
     method: 'POST',
-    url: 'https://fcm.googleapis.com/v1/projects/evenhub-f8c6e/messages:send',
+    url: 'https://fcm.googleapis.com/v1/projects/taseven-b9e1b/messages:send',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${await getAccessToken()}`
@@ -83,7 +82,6 @@ const handleSendNotification = async ({
         notification: {
           title,
           body
-
         },
         data
       }
@@ -384,5 +382,8 @@ module.exports = {
   getFollowes,
   getFollowings,
   updateInterests,
-  toggleFollowing
+  toggleFollowing,
+  getAccessToken,
+  handleSendNotification,
+  updateFcmToken
 }
