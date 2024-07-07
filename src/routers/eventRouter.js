@@ -3,7 +3,8 @@ const {
   createCategory,
   getCategories,
   updateCategory,
-  getCategoryDetail
+  getCategoryDetail,
+  getEvents
 } = require('../controllers/eventController')
 
 const eventRouter = Router()
@@ -12,5 +13,6 @@ eventRouter.post('/create-category', createCategory)
 eventRouter.get('/get-categories', getCategories)
 eventRouter.put('/update-category', updateCategory)
 eventRouter.get('/get-category', getCategoryDetail)
+eventRouter.get('/get-events', getEvents)
 
 module.exports = eventRouter
