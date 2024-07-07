@@ -38,6 +38,15 @@ const UserSchema = new mongoose.Schema({
   },
   fcmTokens: {
     type: [String]
+  },
+  following: {
+    type: [String]
+  },
+  followers: {
+    type: [String]
+  },
+  interests: {
+    type: [String]
   }
 })
 
