@@ -278,7 +278,6 @@ const getEventsFollowed = asyncHandle(async (req, res) => {
 const getFollowes = asyncHandle(async (req, res) => {
   const { uid } = req.query
 
-
   if (uid) {
     const users = await UserModel.find({ following: { $all: uid } })
 
@@ -342,7 +341,7 @@ const toggleFollowing = asyncHandle(async (req, res) => {
   const { uid, authorId } = req.body
 
   if (uid && authorId) {
-    const user = await UserModel.findById(uid)
+    const user = await UserModel.findById({ id: uid })
 
     if (user) {
       const { following } = user
